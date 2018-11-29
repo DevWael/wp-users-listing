@@ -35,10 +35,10 @@ function bb_user_listing_assets() {
 	wp_localize_script(
 		'bb-user-listing-js',
 		'bb_ul_obj',
-		array(
+		[
 			'ajaxurl'    => admin_url( 'admin-ajax.php' ),
-			'ajax_nonce' => wp_create_nonce( 'online_visitors' ),
-		)
+			'ajax_nonce' => wp_create_nonce( 'user_listing' ),
+		]
 	);
 }
 
@@ -49,12 +49,41 @@ function bb_get_role_names() {
 	if ( ! isset( $wp_roles ) ) {
 		$wp_roles = new WP_Roles();
 	}
-	$all_roles = array(
+	$all_roles = [
 		'' => esc_html__( 'Select Role', 'bbioon' )
-	);
+	];
 
 	return $all_roles + $wp_roles->get_names();
 }
 
+function bb_users_list_html( $all_users ) {
+	if ( ! empty( $all_users ) ) {
+		$i = 1;
+		foreach ( $all_users as $user ) {
+			$user_info = get_userdata( $user->ID );
+			?>
+            <tr class="user-data <?php if ( $i % 2 == 0 ) {
+				echo 'alternate';
+			} ?>">
+                <th class="check-column" style="text-align: center"
+                    scope="row"><?php echo esc_html( $i ); ?></th>
+                <th class="check-column" style="text-align: center"
+                ><?php echo esc_html( $user_info->ID ); ?></th>
+                <td class="column-columnname"><?php echo esc_html( $user_info->display_name ); ?></td>
+                <td class="column-columnname"><?php echo esc_html( $user_info->user_login ); ?></td>
+                <td class="column-cap"><?php echo esc_html( $user_info->roles ? $user_info->roles[0] : false ); ?></td>
+            </tr>
+			<?php
+			$i ++;
+		}
+	} else {
+		?>
+        <tr class="user-data">
+            <td colspan="5" style="text-align: center"><?php esc_html_e( 'No Users With These Filters...', 'bbioon' ); ?></td>
+        </tr>
+		<?php
+	}
+}
+
 include plugin_dir_path( __FILE__ ) . 'admin.php';
-include plugin_dir_path( __FILE__ ) . 'users-template.php';
+include plugin_dir_path( __FILE__ ) . 'users-request.php';
