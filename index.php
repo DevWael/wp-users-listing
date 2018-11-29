@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Users Listing
-Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
-Description: A brief description of the Plugin.
+Plugin URI: https://github.com/DevWael/wp-users-listing
+Description: List All WordPress Users With Ajax Filters
 Version: 1.0
-Author: apple
+Author: Ahmad Wael
 Author URI: https://github.com/DevWael
 License: GPLv2
 */
