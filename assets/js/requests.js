@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
     /**
-     * Pagination ajax click inspired by this article:
+     * Pagination ajax click event inspired by this article:
      * https://aiocollective.com/blog/click-doesn-t-work-after-ajax-load-jquery/
      */
     $('.user-listing').on('click', '.sort-apply', function (e) {
@@ -23,11 +23,14 @@
             data: data_request,
             success: function (data) {
                 //console.log(data);
-                $(".tablenav.users-pagination .tablenav-pages").remove();
-                $(".user-data").remove();
-                $(".table-template tbody").append(data.users_data);
-                $(".tablenav.users-pagination").append(data.pagination_data);
-
+                if(typeof data.users_data !== "undefined"){
+                    $(".tablenav.users-pagination .tablenav-pages").remove();
+                    $(".user-data").remove();
+                    $(".table-template tbody").append(data.users_data);
+                    if(typeof data.pagination_data !== "undefined") {
+                        $(".tablenav.users-pagination").append(data.pagination_data);
+                    }
+                }
             },
             error: function (errorThrown) {
                 //console.log(errorThrown);

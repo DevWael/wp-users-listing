@@ -36,11 +36,11 @@ class User_Listing_Settings_Page {
 				//print_r(get_role_names());
 				//submit_button();
 				$args        = [
-					'number' => 10
+					'number' => 10 //max number of users 10
 				];
 				$users       = new WP_User_Query( $args );
 				$all_users   = $users->get_results();
-				$total_users = $users->get_total();
+				$total_users = $users->get_total();//Get result users count For Pagination
 				?>
                 <button class="sort-apply blue-button button button-primary" data-offset="0" type="button">Apply</button>
             </div>
@@ -48,8 +48,7 @@ class User_Listing_Settings_Page {
             <br>
             <div class="table-template">
 				<?php if ( $total_users ) {
-					$total_pages = ceil( $total_users / 10 );
-					//print_r( $total_pages );
+					$total_pages = ceil( $total_users / 10 ); //count pages based on 10 users of the given result per page
 					?>
                     <div class="tablenav users-pagination">
 						<?php if ( $total_pages > 1 ) { ?>
@@ -87,9 +86,7 @@ class User_Listing_Settings_Page {
                     </tr>
                     </thead>
                     <tbody>
-					<?php
-					bb_users_list_html( $all_users );
-					?>
+					<?php bb_users_list_html( $all_users ); ?>
                     </tbody>
                 </table>
             </div>

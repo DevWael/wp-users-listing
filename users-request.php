@@ -10,36 +10,36 @@ function bb_display_users() {
 	$ordering    = [ 'ASC', 'DESC' ];
 	$ordering_by = [ 'display_name', 'user_login' ];
 	$args        = [
-		'number' => 10
+		'number' => 10,
 	];
 	if ( isset( $_POST['offset'] ) && is_numeric( $_POST['offset'] ) ) {
 		//validate received offset parameter
-		$args['offset'] = $_POST['offset'];
+		$args['offset'] = (int) sanitize_text_field( $_POST['offset'] ); //skip this number of users and give the next
 	}
 	if ( isset( $_POST['role_filer'] ) && ! empty( $_POST['role_filer'] ) ) {
 		//validate received role filter parameter
 		if ( array_key_exists( $_POST['role_filer'], bb_get_role_names() ) ) {
-			$args['role'] = $_POST['role_filer'];
+			$args['role'] = sanitize_text_field( $_POST['role_filer'] );// filter users by role
 		}
 	}
 
 	if ( isset( $_POST['order_by'] ) && ! empty( $_POST['order_by'] ) ) {
 		//validate received order by parameter
-		if ( in_array( $_POST['order_by'], $ordering_by ) ) {
-			$args['orderby'] = $_POST['order_by'];
+		if ( in_array( $_POST['order_by'], $ordering_by, true ) ) {
+			$args['orderby'] = sanitize_text_field( $_POST['order_by'] );//set sorting method
 		}
 	}
 
 	if ( isset( $_POST['order_method'] ) && ! empty( $_POST['order_method'] ) ) {
 		//validate received order parameter
-		if ( in_array( $_POST['order_method'], $ordering ) ) {
-			$args['order'] = $_POST['order_method'];
+		if ( in_array( $_POST['order_method'], $ordering, true ) ) {
+			$args['order'] = sanitize_text_field( $_POST['order_method'] );//set the sort order
 		}
 	}
 
 	$users       = new WP_User_Query( $args );
 	$all_users   = $users->get_results();
-	$total_users = $users->get_total();
+	$total_users = $users->get_total();//Get result users count For Pagination
 
 	ob_start();
 	bb_users_list_html( $all_users );
@@ -79,7 +79,7 @@ function bb_display_users() {
 	ob_end_clean();
 	$send_data = [
 		'users_data'      => $users_data,
-		'pagination_data' => $pagination_data
+		'pagination_data' => $pagination_data,
 	];
 	wp_send_json( $send_data );
 }

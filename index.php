@@ -3,7 +3,7 @@
 Plugin Name: Users Listing
 Plugin URI: https://github.com/DevWael/wp-users-listing
 Description: List All WordPress Users With Ajax Filters
-Version: 1.0
+Version: 0.2
 Author: Ahmad Wael
 Author URI: https://github.com/DevWael
 License: GPLv2
@@ -11,6 +11,7 @@ License: GPLv2
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+
 //Plugin Activation indicator
 if ( ! defined( 'BB_USER_LISTING' ) ) {
 	define( 'BB_USER_LISTING', true );
@@ -29,7 +30,7 @@ define( 'BB_USER_LISTING_ASSETS', plugin_dir_url( __FILE__ ) . 'assets/' );
  */
 add_action( 'admin_enqueue_scripts', 'bb_user_listing_assets' );
 function bb_user_listing_assets() {
-	wp_enqueue_style( 'razz-custom-widgets', BB_USER_LISTING_ASSETS . 'css/style.css' );
+	wp_enqueue_style( 'bb-user-listing-css', BB_USER_LISTING_ASSETS . 'css/style.css', false, BB_USER_LISTING_VERSION );
 
 	wp_enqueue_script( 'bb-user-listing-js', BB_USER_LISTING_ASSETS . 'js/requests.js', array( 'jquery' ), BB_USER_LISTING_VERSION, true );
 	wp_localize_script(
@@ -42,6 +43,9 @@ function bb_user_listing_assets() {
 	);
 }
 
+/**
+ * Get all roles plus an empty role for the filter select form field
+ */
 function bb_get_role_names() {
 
 	global $wp_roles;
@@ -50,12 +54,17 @@ function bb_get_role_names() {
 		$wp_roles = new WP_Roles();
 	}
 	$all_roles = [
-		'' => esc_html__( 'Select Role', 'bbioon' )
+		'' => esc_html__( 'Select Role', 'bbioon' ),
 	];
 
 	return $all_roles + $wp_roles->get_names();
 }
 
+/**
+ * List all users given from the wp user query result
+ *
+ * @param $all_users object from wp user query class
+ */
 function bb_users_list_html( $all_users ) {
 	if ( ! empty( $all_users ) ) {
 		$i = 1;
@@ -79,11 +88,12 @@ function bb_users_list_html( $all_users ) {
 	} else {
 		?>
         <tr class="user-data">
-            <td colspan="5" style="text-align: center"><?php esc_html_e( 'No Users With These Filters...', 'bbioon' ); ?></td>
+            <td colspan="5"
+                style="text-align: center"><?php esc_html_e( 'No Users With These Filters...', 'bbioon' ); ?></td>
         </tr>
 		<?php
 	}
 }
 
-include plugin_dir_path( __FILE__ ) . 'admin.php';
-include plugin_dir_path( __FILE__ ) . 'users-request.php';
+include plugin_dir_path( __FILE__ ) . 'admin.php'; //Load admin page
+include plugin_dir_path( __FILE__ ) . 'users-request.php'; //Process ajax requests
